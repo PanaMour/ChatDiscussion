@@ -1,41 +1,40 @@
-import React, { useEffect, useRef } from 'react';
-import ReactDOM from 'react-dom';
+import React, { useState } from 'react';
+import './App.css';
 
-const Chat = () => {
-  const externalWindow = useRef(null);
-  const containerDiv = useRef(null);
+const Chat = ({ goBack }) => {
+  const [message, setMessage] = useState(''); // For the current message
+  const [chatHistory, setChatHistory] = useState([]); // To store all the messages
 
-  useEffect(() => {
-    externalWindow.current = window.open('', '', 'width=600,height=400,left=200,top=200');
-
-    if (!externalWindow.current) {
-      // Popup blocked
-      alert('Please allow pop-ups');
-      return;
+  const handleSend = (event) => {
+    event.preventDefault();
+    if (message !== '') {
+      setChatHistory([...chatHistory, message]);
+      setMessage('');
     }
-
-    externalWindow.current.onload = () => {
-      containerDiv.current = externalWindow.current.document.createElement('div');
-      externalWindow.current.document.body.appendChild(containerDiv.current);
-    }
-
-    return () => {
-      if (externalWindow.current) {
-        externalWindow.current.close();
-      }
-    };
-  }, []);
-
-  if (containerDiv.current) {
-    return ReactDOM.createPortal(
-      <div>
-        <h1>Chat Screen</h1>
-      </div>,
-      containerDiv.current
-    );
-  } else {
-    return null;
   }
+
+  return (
+    <div className="container">
+      <button onClick={goBack}>Back</button>
+      <h1>Chat Screen</h1>
+
+      <div className="chat-history">
+        {chatHistory.map((msg, index) => (
+          <p key={index}>{msg}</p>
+        ))}
+      </div>
+
+      <form onSubmit={handleSend}>
+        <input 
+          type="text" 
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          placeholder="Type a message..."
+        />
+        <button type="submit">Send</button>
+      </form>
+    </div>
+  );
 };
 
 export default Chat;

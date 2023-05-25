@@ -1,19 +1,24 @@
-import React, { useState } from 'react';
-import Home from './Home';
-import Chat from './Chat';
+import React, { useState } from "react";
+import Chat from "./Chat";
+import './App.css';
 
-const App = () => {
-  const [isChatOpen, setIsChatOpen] = useState(false);
+function App() {
+  const [screen, setScreen] = useState("home");
 
-  const handleChatClick = () => {
-    setIsChatOpen(true);
-  };
+  if (screen === "home") {
+    return (
+      <div className="container">
+        <h1>TA Web UI</h1>
+        <button onClick={() => setScreen("chat")}>Chat/Discussion</button>
+      </div>
+    );
+  }
 
-  return (
-    <div>
-      {isChatOpen ? <Chat /> : <Home onChatClick={handleChatClick} />}
-    </div>
-  );
-};
+  if (screen === "chat") {
+    return <Chat goBack={() => setScreen("home")} />;
+  }
+
+  return null;
+}
 
 export default App;

@@ -30,3 +30,22 @@ button:hover {
 h1 {
   color: #333;
 }
+.chat-history {
+  height: 400px;
+  width: 80%;
+  border: 1px solid #ddd;
+  margin-bottom: 10px;
+  padding: 10px;
+  overflow-y: auto;
+}
+
+form {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  width: 80%;
+}
+
+form input {
+  width: 100%;
+}
