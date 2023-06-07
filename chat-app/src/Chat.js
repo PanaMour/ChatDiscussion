@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import './App.css';
 
-const Chat = ({ goBack }) => {
+const Chat = ({ currentUser, goBack }) => {
   const [message, setMessage] = useState(''); // For the current message
   const [chatHistory, setChatHistory] = useState([]); // To store all the messages
 
   const handleSend = (event) => {
     event.preventDefault();
     if (message !== '') {
-      setChatHistory([...chatHistory, message]);
+      setChatHistory([...chatHistory, { user: currentUser, text: message }]);
       setMessage('');
     }
   }
@@ -19,9 +19,9 @@ const Chat = ({ goBack }) => {
       <h1>Chat Screen</h1>
 
       <div className="chat-history">
-        {chatHistory.map((msg, index) => (
-          <p key={index}>{msg}</p>
-        ))}
+      {chatHistory.map((msg, index) => (
+  <p key={index}><strong>{msg.user}</strong>: {msg.text}</p>
+))}
       </div>
 
       <form onSubmit={handleSend}>
