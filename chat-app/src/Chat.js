@@ -14,9 +14,9 @@ const Chat = ({ currentUser, goBack }) => {
         setUsers(data);
       })
       .catch(error => {
-        // Handle the error
+        // Log the detailed error
         console.error('Error:', error);
-      });
+      });      
   }, []);  // Empty dependency array means this effect runs once on mount
 
   const handleSend = (event) => {
