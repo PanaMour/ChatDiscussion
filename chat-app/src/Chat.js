@@ -2,46 +2,75 @@ import React, { useState, useEffect } from 'react';
 import './App.css';
 
 const Chat = ({ currentUser, goBack }) => {
-  const [message, setMessage] = useState(''); // For the current message
-  const [chatHistory, setChatHistory] = useState([]); // To store all the messages
-  const [users, setUsers] = useState([]); // For all the users
-  const [selectedUser, setSelectedUser] = useState(null); // For the selected user
+  const [message, setMessage] = useState('');
+  const [users, setUsers] = useState([]);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [chatHistory, setChatHistory] = useState([]);
 
   useEffect(() => {
-    fetch('http://localhost:5000/users') // Replace with your server API
+    fetch('http://localhost:5000/users')
       .then(response => response.json())
-      .then(data => {
-        setUsers(data);
-      })
-      .catch(error => {
-        // Log the detailed error
-        console.error('Error:', error);
-      });      
-  }, []);  // Empty dependency array means this effect runs once on mount
+      .then(data => setUsers(data))
+      .catch(error => console.error('Error:', error));
+  }, []);
 
-  const handleSend = (event) => {
-    event.preventDefault();
-    if (message !== '' && selectedUser) {
-      setChatHistory([...chatHistory, { user: currentUser, text: message, recipient: selectedUser }]);
-      setMessage('');
+  const fetchChatHistory = (userId1, userId2) => {
+    fetch(`http://localhost:5000/chats/${userId1}/${userId2}`)
+      .then(response => response.json())
+      .then(data => setChatHistory(data))
+      .catch(error => console.error('Error:', error));
+  };
+
+  const handleUserChange = (e) => {
+    const userId = Number(e.target.value);
+    const selectedUser = users.find(user => user.Id === userId);
+    setSelectedUser(selectedUser);
+    setChatHistory([]);
+    if (selectedUser) {
+      console.log("Selected User:", selectedUser);
+      fetchChatHistory(currentUser, selectedUser.Id);
     }
-  }
+  };
+
+  const handleSend = (e) => {
+    e.preventDefault();
+    if (message.trim() !== '' && selectedUser) {
+      fetch(`http://localhost:5000/chats`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ sender: currentUser, recipient: selectedUser.Id, text: message }),
+      })
+      .then(response => {
+        if (response.ok) {
+          setMessage('');
+          fetchChatHistory(currentUser, selectedUser.Id);
+        } else {
+          throw new Error('Network response was not ok');
+        }
+      })
+      .catch(error => console.error('Error:', error));
+    }
+  };
 
   return (
     <div className="container">
       <button onClick={goBack}>Back</button>
       <h1>Chat Screen</h1>
 
-      <select onChange={(e) => setSelectedUser(e.target.value)}>
+      <select onChange={handleUserChange}>
         <option value="">Select user to chat with</option>
         {users.map(user => (
-          <option key={user.Id} value={user.UserName}>{user.UserName}</option>
+          <option key={user.Id} value={user.Id}>{user.UserName}</option>
         ))}
       </select>
 
       <div className="chat-history">
         {chatHistory.map((msg, index) => (
-          <p key={index}><strong>{msg.user}</strong>: {msg.text}</p>
+          <p key={index}>
+            <strong>{msg.SenderUserId === currentUser ? 'You' : selectedUser.UserName}</strong>: {msg.Message}
+          </p>
         ))}
       </div>
 
