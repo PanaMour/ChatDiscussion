@@ -8,49 +8,61 @@ const Chat = ({ currentUser, goBack }) => {
   const [chatHistory, setChatHistory] = useState([]);
 
   useEffect(() => {
+    console.log('Fetching users...');
     fetch('http://localhost:5000/users')
       .then(response => response.json())
-      .then(data => setUsers(data))
-      .catch(error => console.error('Error:', error));
+      .then(data => {
+        console.log('Users fetched:', data);
+        setUsers(data);
+      })
+      .catch(error => console.error('Error fetching users:', error));
   }, []);
 
   const fetchChatHistory = (userId1, userId2) => {
+    console.log(`Fetching chat history for users ${userId1} and ${userId2}...`);
     fetch(`http://localhost:5000/chats/${userId1}/${userId2}`)
       .then(response => response.json())
-      .then(data => setChatHistory(data))
-      .catch(error => console.error('Error:', error));
+      .then(data => {
+        console.log('Chat history fetched:', data);
+        setChatHistory(data);
+      })
+      .catch(error => console.error(`Error fetching chat history for users ${userId1} and ${userId2}:`, error));
   };
 
   const handleUserChange = (e) => {
-    const userId = Number(e.target.value);
-    const selectedUser = users.find(user => user.Id === userId);
+    const userName = e.target.value;
+    const selectedUser = users.find(user => user.UserName === userName);
+    console.log("User Name selected:", userName);
+    console.log("Selected User:", selectedUser);
     setSelectedUser(selectedUser);
     setChatHistory([]);
+  
     if (selectedUser) {
-      console.log("Selected User:", selectedUser);
-      fetchChatHistory(currentUser, selectedUser.Id);
+      fetchChatHistory(currentUser.ID, selectedUser.ID);
     }
   };
 
   const handleSend = (e) => {
     e.preventDefault();
     if (message.trim() !== '' && selectedUser) {
+      console.log(`Sending message "${message}" to user ${selectedUser.ID}...`);
       fetch(`http://localhost:5000/chats`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ sender: currentUser, recipient: selectedUser.Id, text: message }),
+        body: JSON.stringify({ sender: currentUser.ID, recipient: selectedUser.ID, text: message }),
       })
       .then(response => {
         if (response.ok) {
+          console.log('Message sent successfully');
           setMessage('');
-          fetchChatHistory(currentUser, selectedUser.Id);
+          fetchChatHistory(currentUser.ID, selectedUser.ID);
         } else {
           throw new Error('Network response was not ok');
         }
       })
-      .catch(error => console.error('Error:', error));
+      .catch(error => console.error('Error sending message:', error));
     }
   };
 
@@ -62,17 +74,18 @@ const Chat = ({ currentUser, goBack }) => {
       <select onChange={handleUserChange}>
         <option value="">Select user to chat with</option>
         {users.map(user => (
-          <option key={user.Id} value={user.Id}>{user.UserName}</option>
+          <option key={user.ID} value={user.UserName}>{user.UserName}</option>
         ))}
       </select>
 
       <div className="chat-history">
-        {chatHistory.map((msg, index) => (
-          <p key={index}>
-            <strong>{msg.SenderUserId === currentUser ? 'You' : selectedUser.UserName}</strong>: {msg.Message}
-          </p>
-        ))}
-      </div>
+      {chatHistory.map((msg, index) => (
+        <p key={index} className={`message ${msg.SenderUserId === currentUser.ID ? 'sender' : ''}`}>
+          <strong>{msg.SenderUserId === currentUser.ID ? 'You' : selectedUser.UserName}</strong>: {msg.Message}
+        </p>
+      ))}
+    </div>
+
 
       <form onSubmit={handleSend}>
         <input 

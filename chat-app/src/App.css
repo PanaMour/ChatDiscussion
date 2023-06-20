@@ -32,12 +32,25 @@ h1 {
 }
 .chat-history {
   height: 400px;
+  flex-direction: column;
+  display: flex;
   width: 80%;
   border: 1px solid #ddd;
   margin-bottom: 10px;
   padding: 10px;
   overflow-y: auto;
 }
+.chat-history .message {
+  text-align: left;
+  align-self: flex-start;
+  max-width: 80%;
+}
+
+.chat-history .message.sender {
+  text-align: right;
+  align-self: flex-end;
+}
+
 
 form {
   display: flex;

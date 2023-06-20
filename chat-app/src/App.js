@@ -58,8 +58,9 @@ function App() {
   }
 
   if (screen === "chat" && currentUser) {
-    return <Chat currentUser={currentUser.Id} goBack={() => setScreen("home")} />;
+  return <Chat currentUser={currentUser} goBack={() => setScreen("home")} />;
   }
+
   
 
   return null;
