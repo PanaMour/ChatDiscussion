@@ -29,14 +29,11 @@ const Chat = ({ currentUser, goBack }) => {
       .catch(error => console.error(`Error fetching chat history for users ${userId1} and ${userId2}:`, error));
   };
 
-  const handleUserChange = (e) => {
-    const userName = e.target.value;
-    const selectedUser = users.find(user => user.UserName === userName);
-    console.log("User Name selected:", userName);
+  const handleUserChange = (selectedUser) => {
     console.log("Selected User:", selectedUser);
     setSelectedUser(selectedUser);
     setChatHistory([]);
-  
+
     if (selectedUser) {
       fetchChatHistory(currentUser.ID, selectedUser.ID);
     }
@@ -70,32 +67,41 @@ const Chat = ({ currentUser, goBack }) => {
     <div className="container">
       <button onClick={goBack}>Back</button>
       <h1>Chat Screen</h1>
+      <div className="app-content">
+      <div className="sidebar">
+        <h2>Users</h2>
+        <div className="users-list">
+          {users.filter(user => user.ID !== currentUser.ID).map(user => (
+            <div 
+              key={user.ID} 
+              onClick={() => handleUserChange(user)} 
+              className={`user-item ${selectedUser && selectedUser.ID === user.ID ? 'user-item-selected' : ''}`}
+            >
+              {user.UserName}
+            </div>
+          ))}
+        </div>
+      </div>
 
-      <select onChange={handleUserChange}>
-        <option value="">Select user to chat with</option>
-        {users.map(user => (
-          <option key={user.ID} value={user.UserName}>{user.UserName}</option>
-        ))}
-      </select>
-
-      <div className="chat-history">
-      {chatHistory.map((msg, index) => (
-        <p key={index} className={`message ${msg.SenderUserId === currentUser.ID ? 'sender' : ''}`}>
-          <strong>{msg.SenderUserId === currentUser.ID ? 'You' : selectedUser.UserName}</strong>: {msg.Message}
-        </p>
-      ))}
-    </div>
-
-
-      <form onSubmit={handleSend}>
-        <input 
-          type="text" 
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          placeholder="Type a message..."
-        />
-        <button type="submit">Send</button>
-      </form>
+        <div className="chat">
+          <div className="chat-history">
+            {chatHistory.map((msg, index) => (
+              <p key={msg._id && msg._id.$oid ? msg._id.$oid : index} className={`message ${msg.SenderUserId === currentUser.ID ? 'sender' : ''}`}>
+                <strong>{msg.SenderUserId === currentUser.ID ? 'You' : selectedUser.UserName}</strong>: {msg.Message}
+              </p>
+            ))}
+          </div>
+          <form onSubmit={handleSend}>
+            <input 
+              type="text" 
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              placeholder="Type a message..."
+            />
+            <button type="submit">Send</button>
+          </form>
+        </div>
+      </div>
     </div>
   );
 };

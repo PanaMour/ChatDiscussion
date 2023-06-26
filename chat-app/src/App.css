@@ -5,17 +5,44 @@ body {
 .container {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
   height: 100vh;
   padding: 2em;
   box-sizing: border-box;
   background-color: #F5F5F5;
 }
 
+.app-content {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  height: calc(100% - 60px);
+}
+
+.sidebar {
+  position: relative;
+  width: 25%;
+  height: 95%;
+  border-right: 1px solid #ddd;
+  padding: 10px;
+  background-color: #fff;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+}
+.sidebar h2 {
+  margin-bottom: 20px;
+}
+.chat {
+  width: 70%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-right: 2%;
+}
+
 button {
   padding: 10px 20px;
-  margin-top: 20px;
   border: none;
   border-radius: 5px;
   background-color: #007BFF;
@@ -30,16 +57,35 @@ button:hover {
 h1 {
   color: #333;
 }
+
+.user-item {
+  padding: 10px;
+  cursor: pointer;
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 10px;
+}
+.user-item:last-child {
+  margin-bottom: 0;
+}
+.user-item:hover {
+  background-color: #0056b3;
+}
+.users-list {
+  height: calc(95% - 40px);
+  overflow-y: auto;
+}
 .chat-history {
-  height: 400px;
+  height: 500px;
   flex-direction: column;
+  background-color: #ddd;
   display: flex;
-  width: 50%;
+  width: 100%;
   border: 1px solid #ddd;
   margin-bottom: 10px;
   padding: 10px;
   overflow-y: auto;
 }
+
 .chat-history .message {
   text-align: left;
   align-self: flex-start;
@@ -51,14 +97,54 @@ h1 {
   align-self: flex-end;
 }
 
-
 form {
   display: flex;
   justify-content: center;
   gap: 10px;
-  width: 50%;
+  width: 100%;
 }
 
 form input {
+  flex-grow: 1;
+}
+
+form button {
+  flex-grow: 0;
+}
+.user-item-selected {
+  background-color: #007BFF
+}
+.app-content-wrapper {
+  display: flex;
+  justify-content: center;
   width: 100%;
+  max-width: 1200px;
+}
+.select-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.select-container select {
+  padding: 10px;
+  width: 200px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+}
+
+.select-container button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  background-color: #007BFF;
+  color: white;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.select-container button:hover {
+  background-color: #0056b3;
 }

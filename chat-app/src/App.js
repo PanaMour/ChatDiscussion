@@ -11,22 +11,18 @@ function App() {
   useEffect(() => {
     fetch('http://localhost:5000/users') // Replace with your server API
       .then(response => response.json())
-      .then(data => setUsers(data))
+      .then(data => {
+        setUsers(data);
+        setCurrentUser(data[0]); // Set the first user as the current user
+      })
       .catch(error => console.error('Error:', error));
   }, []);
 
   if (screen === "userSelection") {
     return (
       <div className="container">
-        <h1>Select User</h1>
-        <form onSubmit={(e) => {
-          e.preventDefault();
-          if (currentUser) {
-            setScreen("chat");
-          } else {
-            alert("Please select a user before proceeding to chat.");
-          }
-        }}>
+        <h1>Select User to Login with:</h1>
+        <div className="select-container">
           <select onChange={(e) => {
             const selectedUserName = e.target.value;
             const selectedUser = users.find(user => user.UserName === selectedUserName);
@@ -37,17 +33,16 @@ function App() {
               console.error('User not found:', selectedUserName);
             }
           }}>
-            <option value="">Select a user</option>
             {users.map(user => (
               <option key={user.Id} value={user.UserName}>{user.UserName}</option>
             ))}
           </select>
-          <button type="submit">Go to Chat</button>
-        </form>
+          <button onClick={() => setScreen("chat")}>Go to Chat</button>
+        </div>
       </div>
     );
   }
-
+  
   if (screen === "home") {
     return (
       <div className="container">
@@ -58,10 +53,8 @@ function App() {
   }
 
   if (screen === "chat" && currentUser) {
-  return <Chat currentUser={currentUser} goBack={() => setScreen("home")} />;
+    return <Chat currentUser={currentUser} goBack={() => setScreen("home")} />;
   }
-
-  
 
   return null;
 }
